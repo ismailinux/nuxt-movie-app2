@@ -18,7 +18,6 @@
             </button>
           </div>
         </div>
-        <!-- Dropdown Search Bar -->
         <div
           v-if="isSearchOpen"
           class="absolute top-full left-0 right-0 mx-auto max-w-7xl px-4 py-4 bg-gray-800 shadow-lg transition-all duration-300 ease-in-out z-10 rounded-b-lg"
@@ -81,7 +80,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Optional: Enhance dropdown animation */
 .absolute {
   transition: all 0.3s ease-in-out;
 }

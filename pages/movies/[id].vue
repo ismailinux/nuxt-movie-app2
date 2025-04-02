@@ -61,34 +61,30 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router'; // If not using Nuxt, adjust import
-import Modal from '~/components/Modal.vue'; // Correct import assuming Nuxt auto-imports or alias
-
+import { useRoute } from 'vue-router'; 
+import Modal from '~/components/Modal.vue'; 
 const config = useRuntimeConfig();
 const route = useRoute();
 const movie = ref(null);
-const showModal = ref(false); // Define modal state
-const trailerUrl = ref('');   // Define trailer URL state
+const showModal = ref(false); 
+const trailerUrl = ref('');   
 
 onMounted(async () => {
   try {
-    // Fetch movie details
     const detailsResponse = await fetch(
       `${config.public.apiBase}/movie/${route.params.id}?api_key=${config.public.apiKey}`
     );
     const detailsData = await detailsResponse.json();
 
-    // Fetch trailer videos
     const videosResponse = await fetch(
       `${config.public.apiBase}/movie/${route.params.id}/videos?api_key=${config.public.apiKey}`
     );
     const videosData = await videosResponse.json();
     const trailer = videosData.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
 
-    // Combine movie data with trailer key
     movie.value = {
       ...detailsData,
-      trailerKey: trailer ? trailer.key : null // Add trailerKey to movie
+      trailerKey: trailer ? trailer.key : null 
     };
   } catch (error) {
     console.error('Error fetching movie details:', error);
@@ -99,7 +95,6 @@ const getImageUrl = (path) => {
   return path ? `${config.public.imageBase}/w500${path}` : '/placeholder.jpg';
 };
 
-// Function to format runtime
 const formatRuntime = (minutes) => {
   if (!minutes) return 'N/A';
   const hours = Math.floor(minutes / 60);
@@ -107,20 +102,17 @@ const formatRuntime = (minutes) => {
   return `${hours}h ${mins}m`;
 };
 
-// Function to open trailer modal
 const openTrailerModal = (movieId) => {
   if (movie.value && movie.value.trailerKey) {
     trailerUrl.value = `https://www.youtube.com/embed/${movie.value.trailerKey}?autoplay=1`;
     showModal.value = true;
   } else {
     trailerUrl.value = '';
-    showModal.value = true; // Show modal with "No trailer" message
+    showModal.value = true; 
   }
 };
 
-// Function to close trailer modal
 const closeTrailerModal = () => {
   showModal.value = false;
-  trailerUrl.value = ''; // Reset URL to stop video
-};
+  trailerUrl.value = ''; 
 </script>

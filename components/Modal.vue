@@ -34,5 +34,4 @@ defineEmits(['close']);
 </script>
 
 <style  scoped>
-/* Add any additional scoped styles here if needed */
 </style>

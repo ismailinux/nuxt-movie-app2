@@ -50,7 +50,6 @@ const searchQuery = ref('');
 const movies = ref([]);
 const loading = ref(false);
 
-// Initialize search from URL query
 onMounted(() => {
   const query = route.query.query;
   if (query) {

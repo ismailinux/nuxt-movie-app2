@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Slider Section -->
     <ClientOnly>
       <Swiper
         :modules="[Navigation, Pagination, Autoplay]"
@@ -23,7 +22,6 @@
                {{ movie.overview }}
               </p>
 
-              <!-- Watch Trailer Button -->
               <button
                 @click="openTrailerModal(movie.id)"
                 class="mt-2 md:mt-4 px-3 py-1 sm:px-4 sm:py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition text-sm sm:text-base"
@@ -31,7 +29,6 @@
                 Watch Trailer
               </button>
               <div class="flex items-center gap-2 sm:gap-3 mt-2 md:mt-4 flex-wrap">
-                <!-- Star Rating -->
                 <div class="flex">
                   <span
                     v-for="star in 5"
@@ -54,14 +51,12 @@
       </Swiper>
     </ClientOnly>
 
-    <!-- Modal Component -->
     <Modal
       v-if="showModal"
       :trailer-url="trailerUrl"
       @close="closeTrailerModal"
     />
 
-    <!-- Popular Movies Grid -->
     <h1 class="text-2xl sm:text-4xl font-bold mb-8">Popular Movies</h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <div
@@ -103,16 +98,13 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Modal from '~/components/Modal.vue';
 
-// Access runtime config for API base URL and key
 const config = useRuntimeConfig();
 
-// Reactive references for movie data and modal state
 const movies = ref([]);
 const featuredMovies = ref([]);
 const showModal = ref(false);
 const trailerUrl = ref('');
 
-// Fetch movie data when component mounts
 onMounted(async () => {
   try {
     const [popularResponse, nowPlayingResponse] = await Promise.all([
@@ -125,7 +117,6 @@ onMounted(async () => {
 
     movies.value = popularData.results;
 
-    // Fetch full details including runtime and videos for featured movies
     const detailedMovies = await Promise.all(
       nowPlayingData.results.slice(0, 5).map(async (movie) => {
         const detailsResponse = await fetch(
@@ -151,17 +142,14 @@ onMounted(async () => {
   }
 });
 
-// Function to get poster image URL
 const getImageUrl = (path) => {
   return path ? `${config.public.imageBase}/w500${path}` : '/placeholder.jpg';
 };
 
-// Function to get backdrop image URL
 const getBackdropUrl = (path) => {
   return path ? `${config.public.imageBase}/w1280${path}` : '/placeholder.jpg';
 };
 
-// Function to format runtime
 const formatRuntime = (minutes) => {
   if (!minutes) return 'N/A';
   const hours = Math.floor(minutes / 60);
@@ -169,7 +157,6 @@ const formatRuntime = (minutes) => {
   return `${hours}h ${mins}m`;
 };
 
-// Function to open trailer modal
 const openTrailerModal = (movieId) => {
   const movie = featuredMovies.value.find(m => m.id === movieId);
   if (movie && movie.trailerKey) {
@@ -181,7 +168,6 @@ const openTrailerModal = (movieId) => {
   }
 };
 
-// Function to close trailer modal
 const closeTrailerModal = () => {
   showModal.value = false;
   trailerUrl.value = '';
@@ -189,7 +175,6 @@ const closeTrailerModal = () => {
 </script>
 
 <style >
-/* Ensure both buttons are hidden by default */
 .swiper .swiper-button-prev,
 .swiper .swiper-button-next {
   opacity: 0;
@@ -197,14 +182,12 @@ const closeTrailerModal = () => {
   pointer-events: none;
 }
 
-/* Show buttons when hovering over the Swiper container */
 .swiper:hover .swiper-button-prev,
 .swiper:hover .swiper-button-next {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Responsive adjustments */
 @media (max-width: 639px) {
   .swiper .swiper-button-prev,
   .swiper .swiper-button-next {

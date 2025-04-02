@@ -1,6 +1,5 @@
 <template>
     <div>
-      <!-- Popular Movies Grid -->
       <h1 class="text-2xl sm:text-4xl font-bold mb-8">Popular Movies</h1>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <div
@@ -31,7 +30,6 @@
         </div>
       </div>
   
-      <!-- Navigation Buttons with Page Indicator -->
       <div class="flex justify-center items-center mt-8 space-x-4">
         <button
           @click="previousPage"
@@ -41,7 +39,6 @@
           Previous
         </button>
   
-        <!-- Page Number Boxes -->
         <div class="flex space-x-2">
           <button
             v-for="page in displayedPages"
@@ -77,7 +74,6 @@
   const currentPage = ref(1);
   const totalPages = ref(1);
   
-  // Fetch movies function
   const fetchMovies = async (page) => {
     try {
       const response = await fetch(
@@ -92,12 +88,10 @@
     }
   };
   
-  // Initial fetch
   onMounted(() => {
     fetchMovies(1);
   });
   
-  // Navigation functions
   const nextPage = () => {
     if (currentPage.value < totalPages.value) {
       fetchMovies(currentPage.value + 1);
@@ -116,7 +110,6 @@
     }
   };
   
-  // Computed property for displaying 5 pages
   const displayedPages = computed(() => {
     const pages = [];
     const maxPagesToShow = 5;
@@ -134,7 +127,6 @@
     return pages;
   });
   
-  // Function to get poster image URL
   const getImageUrl = (path) => {
     return path ? `${config.public.imageBase}/w500${path}` : '/placeholder.jpg';
   };
