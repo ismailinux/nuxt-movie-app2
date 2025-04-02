@@ -34,7 +34,7 @@
           <span class="text-white">{{ formatRuntime(movie.runtime) }}</span>
         </div>
         <p class="text-gray-300 text-lg mb-6">{{ movie.overview }}</p>
-        <!-- Watch Trailer Button -->
+        
         <button
           @click="openTrailerModal(movie.id)"
           class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition mb-6"
@@ -63,11 +63,12 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router'; 
 import Modal from '~/components/Modal.vue'; 
+
 const config = useRuntimeConfig();
 const route = useRoute();
 const movie = ref(null);
 const showModal = ref(false); 
-const trailerUrl = ref('');   
+const trailerUrl = ref('');
 
 onMounted(async () => {
   try {
@@ -84,7 +85,7 @@ onMounted(async () => {
 
     movie.value = {
       ...detailsData,
-      trailerKey: trailer ? trailer.key : null 
+      trailerKey: trailer ? trailer.key : null
     };
   } catch (error) {
     console.error('Error fetching movie details:', error);
@@ -108,11 +109,12 @@ const openTrailerModal = (movieId) => {
     showModal.value = true;
   } else {
     trailerUrl.value = '';
-    showModal.value = true; 
+    showModal.value = true;
   }
 };
 
 const closeTrailerModal = () => {
   showModal.value = false;
-  trailerUrl.value = ''; 
+  trailerUrl.value = '';
+};
 </script>
