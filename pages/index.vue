@@ -6,6 +6,8 @@
     <!-- Show actual content when loaded -->
     <div v-else class="p-4 md:p-8">
       <ClientOnly>
+    
+
         <Swiper
           :modules="[Navigation, Pagination, Autoplay]"
           :navigation="true"
@@ -14,6 +16,7 @@
           class="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] max-h-[500px] mb-8 rounded-lg"
         >
           <SwiperSlide v-for="movie in featuredMovies" :key="movie.id">
+            <NuxtLink :to="'/movies/' + movie.id">
             <div class="relative w-full h-full bg-black">
               <img
                 :src="getBackdropUrl(movie.backdrop_path)"
@@ -52,8 +55,11 @@
                 </div>
               </div>
             </div>
+            </NuxtLink>
           </SwiperSlide>
         </Swiper>
+    
+
       </ClientOnly>
 
       <Modal
