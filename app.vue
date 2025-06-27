@@ -3,11 +3,11 @@
     <nav class="bg-gray-800 shadow-lg">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div class="flex items-center justify-between h-16">
-          <NuxtLink to="/" @click.prevent="toggleSearch" class="flex items-center">
+          <NuxtLink to="/" @click.prevent="turnoffSearch"  class="flex items-center">
             <span class="text-xl font-bold">MovieApp</span>
           </NuxtLink>
           <div class="flex items-center">
-            <NuxtLink to="/films" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">
+            <NuxtLink to="/films" @click.prevent="turnoffSearch" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">
               Movies
             </NuxtLink>
             <button
@@ -59,6 +59,10 @@ const toggleSearch = () => {
     searchQuery.value = '';
   }
 };
+
+const turnoffSearch = () =>{
+  isSearchOpen.value =false;
+}
 
 const navigateToSearch = () => {
   if (searchQuery.value.trim()) {
