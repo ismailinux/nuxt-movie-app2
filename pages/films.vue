@@ -1,5 +1,7 @@
 <template>
-    <div>
+  <!-- Show skeleton while loading -->
+    <FilmSkeleton v-if="loading" />
+    <div v-else>
       <h1 class="text-2xl sm:text-4xl font-bold mb-8">Popular Movies</h1>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <div
@@ -68,14 +70,19 @@
   
   <script setup>
   import { ref, onMounted, computed } from 'vue';
+  import FilmSkeleton from '../components/FilmSkeleton.vue';
   
   const config = useRuntimeConfig();
   const movies = ref([]);
   const currentPage = ref(1);
   const totalPages = ref(1);
+  const loading = ref(true);
+
   
   const fetchMovies = async (page) => {
     try {
+      loading.value = true;
+
       const response = await fetch(
         `${config.public.apiBase}/movie/popular?api_key=${config.public.apiKey}&page=${page}`
       );
@@ -85,7 +92,9 @@
       currentPage.value = page;
     } catch (error) {
       console.error('Error fetching movies:', error);
-    }
+    } finally {
+    loading.value = false;
+  }
   };
   
   onMounted(() => {

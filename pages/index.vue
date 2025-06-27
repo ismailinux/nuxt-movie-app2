@@ -1,89 +1,95 @@
 <template>
-  <div>
-    <ClientOnly>
-      <Swiper
-        :modules="[Navigation, Pagination, Autoplay]"
-        :navigation="true"
-        :pagination="{ clickable: true }"
-        :autoplay="{ delay: 60000 }"
-        class="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] max-h-[500px] mb-8 rounded-lg"
-      >
-        <SwiperSlide v-for="movie in featuredMovies" :key="movie.id">
-          <div class="relative w-full h-full bg-black">
-            <img
-              :src="getBackdropUrl(movie.backdrop_path)"
-              :alt="movie.title"
-              class="w-full h-full object-contain md:object-cover lg:object-cover"
-            >
-            <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black to-transparent"></div>
-            <div class="absolute bottom-0 left-0 p-4 sm:p-6 text-white w-full">
-              <h2 class="text-xl sm:text-2xl md:text-4xl font-bold truncate">{{ movie.title }}</h2>
-              <p class="text-xs md:text-base hidden md:block w-full sm:w-1/2 md:w-full lg:w-1/2 mt-2 md:mt-4 line-clamp-2">
-               {{ movie.overview }}
-              </p>
-
-              <button
-                @click="openTrailerModal(movie.id)"
-                class="mt-2 md:mt-4 px-3 py-1 sm:px-4 sm:py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition text-sm sm:text-base"
+  <div class="bg-gray-900 text-white min-h-screen">
+    <!-- Show skeleton while loading -->
+    <HomePageSkeleton v-if="loading" />
+    
+    <!-- Show actual content when loaded -->
+    <div v-else class="p-4 md:p-8">
+      <ClientOnly>
+        <Swiper
+          :modules="[Navigation, Pagination, Autoplay]"
+          :navigation="true"
+          :pagination="{ clickable: true }"
+          :autoplay="{ delay: 60000 }"
+          class="w-full h-[50vh] sm:h-[60vh] md:h-[70vh] max-h-[500px] mb-8 rounded-lg"
+        >
+          <SwiperSlide v-for="movie in featuredMovies" :key="movie.id">
+            <div class="relative w-full h-full bg-black">
+              <img
+                :src="getBackdropUrl(movie.backdrop_path)"
+                :alt="movie.title"
+                class="w-full h-full object-contain md:object-cover lg:object-cover"
               >
-                Watch Trailer
-              </button>
-              <div class="flex items-center gap-2 sm:gap-3 mt-2 md:mt-4 flex-wrap">
-                <div class="flex">
-                  <span
-                    v-for="star in 5"
-                    :key="star"
-                    class="text-yellow-400 text-lg sm:text-xl"
-                  >
-                    {{ star <= Math.round(movie.vote_average / 2) ? '★' : '☆' }}
-                  </span>
+              <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black to-transparent"></div>
+              <div class="absolute bottom-0 left-0 p-4 sm:p-6 text-white w-full">
+                <h2 class="text-xl sm:text-2xl md:text-4xl font-bold truncate">{{ movie.title }}</h2>
+                <p class="text-xs md:text-base hidden md:block w-full sm:w-1/2 md:w-full lg:w-1/2 mt-2 md:mt-4 line-clamp-2">
+                 {{ movie.overview }}
+                </p>
+
+                <button
+                  @click="openTrailerModal(movie.id)"
+                  class="mt-2 md:mt-4 px-3 py-1 sm:px-4 sm:py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition text-sm sm:text-base"
+                >
+                  Watch Trailer
+                </button>
+                <div class="flex items-center gap-2 sm:gap-3 mt-2 md:mt-4 flex-wrap">
+                  <div class="flex">
+                    <span
+                      v-for="star in 5"
+                      :key="star"
+                      class="text-yellow-400 text-lg sm:text-xl"
+                    >
+                      {{ star <= Math.round(movie.vote_average / 2) ? '★' : '☆' }}
+                    </span>
+                  </div>
+                  <span class="text-gray-400">|</span>
+                  <span class="text-sm sm:text-base">{{ movie.vote_count }} Reviews</span>
+                  <span class="text-gray-400">|</span>
+                  <span class="text-sm sm:text-base">{{ new Date(movie.release_date).getFullYear() }}</span>
+                  <span class="text-gray-400">|</span>
+                  <span class="text-sm sm:text-base">{{ formatRuntime(movie.runtime) }}</span>
                 </div>
-                <span class="text-gray-400">|</span>
-                <span class="text-sm sm:text-base">{{ movie.vote_count }} Reviews</span>
-                <span class="text-gray-400">|</span>
-                <span class="text-sm sm:text-base">{{ new Date(movie.release_date).getFullYear() }}</span>
-                <span class="text-gray-400">|</span>
-                <span class="text-sm sm:text-base">{{ formatRuntime(movie.runtime) }}</span>
               </div>
             </div>
-          </div>
-        </SwiperSlide>
-      </Swiper>
-    </ClientOnly>
+          </SwiperSlide>
+        </Swiper>
+      </ClientOnly>
 
-    <Modal
-      v-if="showModal"
-      :trailer-url="trailerUrl"
-      @close="closeTrailerModal"
-    />
+      <Modal
+        v-if="showModal"
+        :trailer-url="trailerUrl"
+        @close="closeTrailerModal"
+      />
 
-    <h1 class="text-2xl sm:text-4xl font-bold mb-8">Popular Movies</h1>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <div
-        v-for="movie in movies"
-        :key="movie.id"
-        class="bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform hover:scale-105"
-      >
-        <NuxtLink :to="'/movies/' + movie.id">
-          <img
-            :src="getImageUrl(movie.poster_path)"
-            :alt="movie.title"
-            class="w-full h-[300px] sm:h-[400px] object-cover"
-          >
-          <div class="p-4">
-            <h2 class="text-base sm:text-lg font-semibold mb-2 truncate">{{ movie.title }}</h2>
-            <div class="flex items-center">
-              <span
-                v-for="star in 5"
-                :key="star"
-                class="text-yellow-400 text-sm sm:text-base"
-              >
-                {{ star <= Math.round(movie.vote_average / 2) ? '★' : '☆' }}
-              </span>
-              <span class="ml-2 sm:ml-3 text-sm sm:text-base">{{ movie.vote_average.toFixed(1) }}</span>
+      <h1 class="text-2xl sm:text-4xl font-bold mb-8">Popular Movies</h1>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div
+          v-for="movie in movies"
+          :key="movie.id"
+          class="bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-transform hover:scale-105"
+        >
+          <NuxtLink :to="'/movies/' + movie.id">
+            <img
+              :src="getImageUrl(movie.poster_path)"
+              :alt="movie.title"
+              class="w-full h-[300px] sm:h-[400px] object-cover"
+            >
+            <div class="p-4">
+              <h2 class="text-base sm:text-lg font-semibold mb-2 truncate">{{ movie.title }}</h2>
+              <div class="flex items-center">
+                <span
+                  v-for="star in 5"
+                  :key="star"
+                  class="text-yellow-400 text-sm sm:text-base"
+                >
+                  {{ star <= Math.round(movie.vote_average / 2) ? '★' : '☆' }}
+                </span>
+                <span class="ml-2 sm:ml-3 text-sm sm:text-base">{{ movie.vote_average.toFixed(1) }}</span>
+              </div>
             </div>
-          </div>
-        </NuxtLink>
+          </NuxtLink>
+        </div>
       </div>
     </div>
   </div>
@@ -97,6 +103,8 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Modal from '~/components/Modal.vue';
+import HomePageSkeleton from '~/components/HomePageSkeleton.vue';
+import { useRuntimeConfig } from '#app';
 
 const config = useRuntimeConfig();
 
@@ -104,9 +112,12 @@ const movies = ref([]);
 const featuredMovies = ref([]);
 const showModal = ref(false);
 const trailerUrl = ref('');
+const loading = ref(true);
 
 onMounted(async () => {
   try {
+    loading.value = true;
+    
     const [popularResponse, nowPlayingResponse] = await Promise.all([
       fetch(`${config.public.apiBase}/movie/popular?api_key=${config.public.apiKey}`),
       fetch(`${config.public.apiBase}/movie/now_playing?api_key=${config.public.apiKey}`),
@@ -139,15 +150,17 @@ onMounted(async () => {
     featuredMovies.value = detailedMovies;
   } catch (error) {
     console.error('Error fetching movies:', error);
+  } finally {
+    loading.value = false;
   }
 });
 
 const getImageUrl = (path) => {
-  return path ? `${config.public.imageBase}/w500${path}` : '/placeholder.jpg';
+  return path ? `${config.public.imageBase}/w500${path}` : '/placeholder.svg?height=600&width=400';
 };
 
 const getBackdropUrl = (path) => {
-  return path ? `${config.public.imageBase}/w1280${path}` : '/placeholder.jpg';
+  return path ? `${config.public.imageBase}/w1280${path}` : '/placeholder.svg?height=720&width=1280';
 };
 
 const formatRuntime = (minutes) => {
@@ -174,7 +187,7 @@ const closeTrailerModal = () => {
 };
 </script>
 
-<style >
+<style>
 .swiper .swiper-button-prev,
 .swiper .swiper-button-next {
   opacity: 0;

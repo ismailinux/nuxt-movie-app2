@@ -1,4 +1,5 @@
 <template>
+  <Skeleton v-if="!movie" />
   <div v-if="movie" class="movie-detail">
     <div class="flex flex-col md:flex-row gap-8">
       <div class="md:w-1/3">
@@ -62,7 +63,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router'; 
-import Modal from '~/components/Modal.vue'; 
+import Modal from '~/components/Modal.vue';
+import Skeleton  from '~/components/MovieDetailSkeleton.vue';
 
 const config = useRuntimeConfig();
 const route = useRoute();

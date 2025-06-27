@@ -7,7 +7,7 @@
             <span class="text-xl font-bold">MovieApp</span>
           </NuxtLink>
           <div class="flex items-center">
-            <NuxtLink to="/movies" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">
+            <NuxtLink to="/films" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">
               Movies
             </NuxtLink>
             <button

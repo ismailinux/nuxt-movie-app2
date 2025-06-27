@@ -3,7 +3,7 @@
     class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
     @click.self="$emit('close')"
   >
-    <div class="bg-gray-900 p-4 rounded-lg w-full max-w-3xl relative">
+    <div class="bg-gray-900 p-4 rounded-lg w-full max-w-3xl relative mx-4">
       <button
         @click="$emit('close')"
         class="text-white text-3xl absolute top-2 right-2"
