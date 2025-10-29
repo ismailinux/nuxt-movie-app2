@@ -3,30 +3,44 @@ name: CICD
 on:
   push:
     branches:
-      - master
+      - master  # or 'main' or 'deploy-to-ec2'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: Login to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build Docker Image
-        run: docker build -t riseofguy26/nuxt-movie-app2 .
-      - name: Publish image to docker hub
-        run: docker push riseofguy26/nuxt-movie-app2:latest   
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-  deploy: 
+      - name: Build & Push Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: riseofguy26/nuxt-movie-app2:latest
+
+  deploy:
     needs: build
-    runs-on: aws-ec2    
+    runs-on: self-hosted  # Your EC2 runner MUST be labeled as self-hosted
     steps:
-      - name: Pull image from docker hub
-        run: docker pull riseofguy26/nuxt-movie-app2:latest 
-      - name: Delete Old Container
-        run: docker rm -f nuxtContainer
-      - name: Run docker container
-        run: docker run -d -p 3000:80 --name nuxtContainer riseofguy26/nuxt-movie-app2   
+      - name: Checkout (optional, for scripts/configs)
+        uses: actions/checkout@v4
 
+      - name: Pull Latest Image
+        run: docker pull riseofguy26/nuxt-movie-app2:latest
 
+      - name: Stop & Remove Old Container
+        run: docker rm -f nuxtContainer || true
+
+      - name: Run New Container
+        run: |
+          docker run -d \
+            -p 3000:80 \
+            --name nuxtContainer \
+            riseofguy26/nuxt-movie-app2:latest
