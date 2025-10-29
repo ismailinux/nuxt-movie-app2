@@ -13,10 +13,10 @@ WORKDIR /usr/share/nginx/html
 # Remove default files
 RUN rm -rf ./*
 
-# Copy Nuxt static files from .output/publics
+# CORRECT PATH: .output/public (not publics)
 COPY --from=build /app/.output/public .
 
-# Optional: Custom Nginx config for SPA routing
+# Custom Nginx config for SPA routing
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
