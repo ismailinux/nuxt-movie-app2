@@ -4,6 +4,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+ARG TMDB_API_KEY
+ENV TMDB_API_KEY=$TMDB_API_KEY
 RUN npm run build
 
 # Step 2: Serve with Nginx

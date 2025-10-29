@@ -24,10 +24,12 @@ jobs:
           context: .
           push: true
           tags: riseofguy26/nuxt-movie-app2:latest
+          build-args: |
+            TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}
 
   deploy:
     needs: build
-    runs-on: self-hosted   # This is the fix!
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v4
