@@ -13,10 +13,14 @@ WORKDIR /usr/share/nginx/html
 # Remove default files
 RUN rm -rf ./*
 
-# CORRECT PATH: .output/public (not publics)
+# Copy static files
 COPY --from=build /app/.output/public .
 
-# Custom Nginx config for SPA routing
+# FIX 403: Give nginx user permission to read files
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chmod -R 755 /usr/share/nginx/html
+
+# Custom config for SPA routing
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
