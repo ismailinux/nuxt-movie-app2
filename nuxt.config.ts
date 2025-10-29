@@ -11,6 +11,10 @@ export default defineNuxtConfig({
       apiKey: process.env.TMDB_API_KEY,
       imageBase: 'https://image.tmdb.org/t/p'
     }
+  },
+
+  // ADD THIS BLOCK
+  nitro: {
+    preset: 'static'
   }
 })
-
